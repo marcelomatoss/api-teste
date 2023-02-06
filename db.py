@@ -1,5 +1,9 @@
-import models
+from models import User
 from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+from fastapi import Depends
+import models
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -9,3 +13,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@app.get("/list-user")
+async def list_user(db:Session=Depends(get_db)):
+    return db.query(User).all()
