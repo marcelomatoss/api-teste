@@ -31,3 +31,22 @@ async def add_user(user:UserBase, db:Session=Depends(get_db))->UserBase:
     db.add(user_model)
     db.commit()
     return user
+
+@app.put("/put-user")
+async def put_user(user:UserBase, index:int, db:Session=Depends(get_db)):
+    user_model = db.query(User).filter(User.user_id == index).first()
+    if user_model is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"ID {index} : Does not exist"
+        )
+    user_model = User()
+    user_model.name = user.name
+    user_model.lastname = user.lastname
+    user_model.age = user.age
+    user_model.genre = user.genre
+
+    db.add(user_model)
+    db.commit()
+
+    return user
