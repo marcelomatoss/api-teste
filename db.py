@@ -3,7 +3,7 @@ from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from fastapi import Depends
 import models
-
+from main import app
 
 models.Base.metadata.create_all(bind=engine)
 
