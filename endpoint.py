@@ -1,15 +1,26 @@
 from models import User
 from schemas.users import UserBase
-from fastapi import FastAPI, Depends
+from fastapi import Depends
 from sqlalchemy.orm import Session
-import db
-app = FastAPI()
+from db import get_db
+from main import app
 
 @app.get("/")
 async def home():
     return {"message":"Folzeck Group"}
 
 @app.get("/list-user")
-async def list_user(user: UserBase, db: Session = Depends(db.get_db)):
+async def list_user(db:Session=Depends(get_db)):
     return db.query(User).all()
 
+@app.post("/add-user")
+async def add_user(user:UserBase, db:Session=Depends(get_db))->UserBase:
+    user_model = User()
+    user_model.name = user.name
+    user_model.lastname = user.lastname
+    user_model.age = user.age
+    user_model.genre = user.genre
+
+    db.add(user_model)
+    db.commit()
+    return user
