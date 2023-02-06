@@ -11,13 +11,13 @@ async def home():
     return {"message":"Folzeck Group"}
 
 @app.get("/list-user")
-async def list_user(user: UserBase, db: Session = Depends(db.get_db)):
+async def list_user(user:UserBase,db:Session=Depends(db.get_db)):
     return db.query(User).all()
 
-@app.get("/list-user-by-index/{index}")
+@app.get("/users/{user_id}")
 async def list_user_by_index(index:int,db:Session=Depends(db.get_db)):
-    user_model=db.query(models.Users).filter(models.Users.user.id==index).first()
-    if user_model is None:
+    user=db.query(models.Users).filter(models.Users.user.id==index).first()
+    if user is None:
         raise HTTPException(
             status_code=404,
             detail=f"ID{index}:Does not exist"
