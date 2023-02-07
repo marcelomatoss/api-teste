@@ -32,24 +32,9 @@ async def add_user(user:UserBase, db:Session=Depends(get_db))->UserBase:
     db.commit()
     return user
 
-@app.put("/users/{user_id}")
-async def put_user(user:PutUser, index:int, db:Session=Depends(get_db)):
-    user_model = db.query(User).filter(User.user_id == index).first()
-    if user_model is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"ID {index} : Does not exist"
-        )
-    user_model = User(user.name,user.lastname,user.age,user.genre)
-    
-    db.add(user_model)
-    db.commit()
-
-    return user
-
     # /delete-user-by-index/{index} -> Delete User by Index
-@app.delete("/delete-user/{index}")
-async def delete_user_by_index(index:int,db:Session=Depends(get_db)):
+@app.delete("/delete-user/{user_id}")
+async def delete_user_by_user_id(index:int,db:Session=Depends(get_db)):
     user=db.query(User).filter(User.user_id==index).first()
 
     if user is None:
@@ -66,4 +51,21 @@ async def delete_all_users(db:Session=Depends(get_db)):
 
     db.query(User).delete()
     db.commit()
+
+@app.put("/users/{user_id}")
+async def put_user(user:PutUser, index:int, db:Session=Depends(get_db)):
+    user_model = db.query(User).filter(User.user_id == index).first()
+    if user_model is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"ID {index} : Does not exist"
+        )
+    user_model = User(user.name,user.lastname,user.age,user.genre)
+    
+    db.add(user_model)
+    db.commit()
+
+    return user
+
+
 
