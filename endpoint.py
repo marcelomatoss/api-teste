@@ -20,7 +20,7 @@ async def list_user_by_index(index:int,db:Session=Depends(get_db)):
     else:
         return db.query(User).filter(User.user_id==index).first()
 
-@app.post("/add-user")
+@app.post("/users")
 async def add_user(user:UserBase, db:Session=Depends(get_db))->UserBase:
     user_model = User()
     user_model.name = user.name
@@ -46,4 +46,22 @@ async def put_user(user:PutUser, index:int, db:Session=Depends(get_db)):
     db.commit()
 
     return user
+
+@app.delete("/users/{user_id}")
+async def delete_user_by_user_id(index:int,db:Session=Depends(get_db)):
+    user=db.query(User).filter(User.user_id==index).first()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"ID{index}:Does not exist"
+        )
+    db.query(User).filter(User.user_id==index).delete()
+    db.commit()
+
+@app.delete("/users")
+async def delete_all_users(db:Session=Depends(get_db)):
+
+    db.query(User).delete()
+    db.commit()
 
