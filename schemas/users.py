@@ -5,3 +5,9 @@ class UserBase(BaseModel):
     lastname:str
     age: int
     genre:Literal["Male", "Female"]
+
+class PutUser(BaseModel):
+    name: str
+    lastname:str
+    age: int
+    genre:Literal["Male", "Female"]

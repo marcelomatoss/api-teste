@@ -1,5 +1,5 @@
 from models import User
-from schemas.users import UserBase
+from schemas.users import UserBase, PutUser
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from db import get_db
@@ -31,3 +31,19 @@ async def add_user(user:UserBase, db:Session=Depends(get_db))->UserBase:
     db.add(user_model)
     db.commit()
     return user
+
+@app.put("/users/{user_id}")
+async def put_user(user:PutUser, index:int, db:Session=Depends(get_db)):
+    user_model = db.query(User).filter(User.user_id == index).first()
+    if user_model is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"ID {index} : Does not exist"
+        )
+    user_model = User(user.name,user.lastname,user.age,user.genre)
+    
+    db.add(user_model)
+    db.commit()
+
+    return user
+
